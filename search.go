@@ -4,7 +4,7 @@ func LinearSearchFloat64s(haystack []float64, needle float64) int {
 	n := len(haystack)
 	i := 0
 
-	// Unroll the loop for better instruction-level parallelism
+	// Unroll the loop for better ILP
 	for n >= 4 {
 		if haystack[i] >= needle {
 			if haystack[i] == needle {
