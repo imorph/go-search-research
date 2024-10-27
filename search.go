@@ -47,3 +47,15 @@ func LinearSearchFloat64s(haystack []float64, needle float64) int {
 	}
 	return len(haystack)
 }
+
+func BasicLinearSearchFloat64s(haystack []float64, needle float64) int {
+	for i, v := range haystack {
+		if v >= needle {
+			if v == needle {
+				return i
+			}
+			return len(haystack)
+		}
+	}
+	return len(haystack)
+}
