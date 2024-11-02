@@ -22,6 +22,8 @@ Additional Questions:
 
 ## Final Conclusions
 
+![Graphic representation of results](./search_results.png "Difference between linear and binary search")
+
 ### Linear vs. Binary Search (Serial Execution)
 
 #### Small Arrays (n ≤ 30-40)
