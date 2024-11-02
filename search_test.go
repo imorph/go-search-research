@@ -18,8 +18,8 @@ func generateSortedFloat64s(n int) []float64 {
 }
 
 func BenchmarkSearchFunctions(b *testing.B) {
-	lengths := []int{10, 20, 30, 50, 100, 200, 500}
-	positions := []string{"beginning", "middle", "end", "notfound"}
+	lengths := []int{10, 20, 30, 35, 40, 50, 60, 100}
+	positions := []string{"beginning", "middle", "end", "too_low", "too_high"}
 
 	for _, n := range lengths {
 		haystack := generateSortedFloat64s(n)
@@ -41,8 +41,10 @@ func BenchmarkSearchFunctions(b *testing.B) {
 					index = n - 1
 				}
 				needle = haystack[index]
-			case "notfound":
-				needle = -1 // Value not in haystack
+			case "too_low":
+				needle = -1.0 // Value not in haystack
+			case "too_high":
+				needle = 500_000_000.0
 			}
 
 			b.Run(fmt.Sprintf("Linear/n=%d/pos=%s", n, pos), func(b *testing.B) {
@@ -61,9 +63,9 @@ func BenchmarkSearchFunctions(b *testing.B) {
 }
 
 func BenchmarkParallelSearches(b *testing.B) {
-	lengths := []int{10, 20, 30, 40, 50}
 	concurrencyLevels := []int{1, 2, 4, 8, 16}
-	positions := []string{"beginning", "middle", "end", "notfound"}
+	lengths := []int{10, 20, 30, 35, 40, 50, 60, 100}
+	positions := []string{"beginning", "middle", "end", "too_low", "too_high"}
 
 	for _, n := range lengths {
 		haystack := generateSortedFloat64s(n)
@@ -85,8 +87,10 @@ func BenchmarkParallelSearches(b *testing.B) {
 					index = n - 1
 				}
 				needle = haystack[index]
-			case "notfound":
-				needle = -1 // Value not in haystack
+			case "too_low":
+				needle = -1.0 // Value not in haystack
+			case "too_high":
+				needle = 500_000_000.0
 			}
 
 			for _, c := range concurrencyLevels {
@@ -125,8 +129,8 @@ func BenchmarkParallelSearches(b *testing.B) {
 }
 
 func BenchmarkLinearSearchImplementations(b *testing.B) {
-	lengths := []int{10, 20, 30, 40, 50, 60, 100}
-	positions := []string{"beginning", "middle", "end", "notfound"}
+	lengths := []int{10, 20, 30, 35, 40, 50, 60, 100}
+	positions := []string{"beginning", "middle", "end", "too_low", "too_high"}
 
 	for _, n := range lengths {
 		haystack := generateSortedFloat64s(n)
@@ -148,8 +152,10 @@ func BenchmarkLinearSearchImplementations(b *testing.B) {
 					index = n - 1
 				}
 				needle = haystack[index]
-			case "notfound":
-				needle = -1 // Value not in haystack
+			case "too_low":
+				needle = -1.0 // Value not in haystack
+			case "too_high":
+				needle = 500_000_000.0
 			}
 
 			b.Run(fmt.Sprintf("OptimizedLinear/n=%d/pos=%s", n, pos), func(b *testing.B) {
