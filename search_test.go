@@ -30,8 +30,9 @@ func generateRandomSortedFloat64s(length int) []float64 {
 }
 
 var resultFindBucket int
+var preTouch float64
 
-const haystackLen = 90
+const haystackLen = 50000
 
 func BenchmarkSearchFloat64sRandom(b *testing.B) {
 	length := haystackLen // Adjust the length of the haystack as needed.
@@ -42,6 +43,21 @@ func BenchmarkSearchFloat64sRandom(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		needle := rand.NormFloat64() + mean
 
+		// Perform the search.
+		resultFindBucket = sort.SearchFloat64s(haystack, needle)
+	}
+}
+
+func BenchmarkSearchPreTouchFloat64sRandom(b *testing.B) {
+	length := haystackLen // Adjust the length of the haystack as needed.
+	haystack := generateRandomSortedFloat64s(length)
+	mean := (slices.Max(haystack) + slices.Min(haystack)) / 2
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		needle := rand.NormFloat64() + mean
+
+		preTouch = haystack[len(haystack)-1]
 		// Perform the search.
 		resultFindBucket = sort.SearchFloat64s(haystack, needle)
 	}
