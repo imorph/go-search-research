@@ -2,6 +2,7 @@ package search
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"sort"
 	"sync"
 	"testing"
@@ -15,6 +16,34 @@ func generateSortedFloat64s(n int) []float64 {
 		haystack[i] = float64(i)
 	}
 	return haystack
+}
+
+// generateRandomFloat64s generates a sorted slice of random float64s of the given length.
+func generateRandomSortedFloat64s(length int) []float64 {
+	s := make([]float64, length)
+	for i := range s {
+		s[i] = rand.Float64()
+	}
+	sort.Float64s(s)
+	return s
+}
+
+var resultFindBucket int
+
+func BenchmarkSearchFloat64sRandom(b *testing.B) {
+	length := 50 // Adjust the length of the haystack as needed.
+	haystack := generateRandomSortedFloat64s(length)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		// Stop the timer while generating random data.
+		b.StopTimer()
+		needle := rand.Float64()
+		b.StartTimer()
+
+		// Perform the search.
+		resultFindBucket = sort.SearchFloat64s(haystack, needle)
+	}
 }
 
 func BenchmarkSearchFunctions(b *testing.B) {
