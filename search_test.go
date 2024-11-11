@@ -3,6 +3,7 @@ package search
 import (
 	"fmt"
 	"math/rand/v2"
+	"slices"
 	"sort"
 	"sync"
 	"testing"
@@ -22,7 +23,7 @@ func generateSortedFloat64s(n int) []float64 {
 func generateRandomSortedFloat64s(length int) []float64 {
 	s := make([]float64, length)
 	for i := range s {
-		s[i] = rand.Float64()
+		s[i] = rand.NormFloat64() + 50.1
 	}
 	sort.Float64s(s)
 	return s
@@ -30,19 +31,46 @@ func generateRandomSortedFloat64s(length int) []float64 {
 
 var resultFindBucket int
 
+const haystackLen = 90
+
 func BenchmarkSearchFloat64sRandom(b *testing.B) {
-	length := 50 // Adjust the length of the haystack as needed.
+	length := haystackLen // Adjust the length of the haystack as needed.
 	haystack := generateRandomSortedFloat64s(length)
+	mean := (slices.Max(haystack) + slices.Min(haystack)) / 2
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		// Stop the timer while generating random data.
-		b.StopTimer()
-		needle := rand.Float64()
-		b.StartTimer()
+		needle := rand.NormFloat64() + mean
 
 		// Perform the search.
 		resultFindBucket = sort.SearchFloat64s(haystack, needle)
+	}
+}
+
+func BenchmarkSearchLinearRandom(b *testing.B) {
+	length := haystackLen // Adjust the length of the haystack as needed.
+	haystack := generateRandomSortedFloat64s(length)
+	mean := (slices.Max(haystack) + slices.Min(haystack)) / 2
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		needle := rand.NormFloat64() + mean
+
+		// Perform the search.
+		resultFindBucket = BasicLinearSearchFloat64s(haystack, needle)
+	}
+}
+
+var needle float64
+
+func BenchmarkRandomNeedleOverhead(b *testing.B) {
+	length := 5000 // Adjust the length of the haystack as needed.
+	haystack := generateRandomSortedFloat64s(length)
+	mean := (slices.Max(haystack) + slices.Min(haystack)) / 2
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		needle = rand.NormFloat64() + mean
 	}
 }
 
